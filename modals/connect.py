@@ -7,7 +7,5 @@ def connect():
         password = "logyouin",
         host = "localhost"
     )
-    cursor = connection.cursor()
-    # cursor.close()
-    return cursor
+    return connection
 
