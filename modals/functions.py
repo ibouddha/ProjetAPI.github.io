@@ -84,3 +84,106 @@ def deleteprompt(id_prompt):
     conn.commit()
     cursor.close()
 
+def add_prompt(prompt):
+    conn = connect.connect()
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO prompt values (%s,%s,%s,%s,%s,%s)",(prompt['id'],prompt['content'],prompt['prix'],prompt['status'],session['user_id']))
+    conn.commit()
+    cursor.close()
+
+def updatePrompt(prompt):
+    conn = connect.connect()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE prompt SET content = %s, prix = %s, status = %s",(prompt['content'],prompt['prix'], prompt['status']))
+    conn.commit()
+    cursor.close()
+
+#delete prompt
+def deletePrompt(id_prompt):
+    conn = connect.connect()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM prompt WHERE id = %s",(id_prompt,))
+    conn.commit()
+    cursor.close()
+
+#get all prompts
+def getAllPrompts():
+    conn = connect.connect()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM prompt")
+    prompts = cursor.fetchall()
+    cursor.close()
+    return prompts
+
+#admin ask for update
+def getPrompt(id_prompt):
+    conn = connect.connect()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM prompt WHERE id = %s",(id_prompt,))
+    prompt = cursor.fetchone()
+    cursor.close()
+    return prompt
+
+#update status of prompt
+def updateStatus(id_prompt,status):
+    conn = connect.connect()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE prompt SET status = %s WHERE id = %s",(status,id_prompt,))
+    conn.commit()
+    cursor.close()
+
+#Validate prompt
+def validatePrompt(id_prompt):
+    conn = connect.connect()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE prompt SET status = 'validé' WHERE id = %s",(id_prompt))
+    conn.commit()
+    cursor.close()
+
+#Proposer des prompts à vendre
+def proposePrompt(id_prompt):
+    conn = connect.connect()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE prompt SET status = 'proposé' WHERE id = %s",(id_prompt))
+    conn.commit()
+    cursor.close()
+    
+#afficher les prompts proposés à vendre
+def getProposedPrompts():
+    conn = connect.connect()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM prompt WHERE status = 'proposé'")
+    prompts = cursor.fetchall()
+    cursor.close()
+    return prompts
+
+#Voter pour l'activation des prompts en attente.
+def votePrompt(id_prompt):
+    conn = connect.connect()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE prompt SET status = 'voté' WHERE id = %s",(id_prompt))
+    conn.commit()
+    cursor.close()
+    
+#Noter les prompts activés (sauf les leurs)
+def notePrompt(id_prompt,user_id,note):
+    conn = connect.connect()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE prompt SET note = %s WHERE id = %s and user_id != %s",(note,id_prompt,user_id))
+    conn.commit()
+    cursor.close()
+    
+#Les membres d'un même groupe ont un impact plus fort sur les notes et les votes
+def notePromptGroup(id_prompt,user_id,note):
+    conn = connect.connect()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE prompt SET note = %s WHERE id = %s and user_id =%s ",(note,prompt_id,user_id))
+    conn.commit()
+    cursor.close()
+    
+def votePromptGroup(id_prompt,user_id,vote):
+    conn = connect.connect()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE prompt SET vote = %s WHERE id = %s and user_id =%s",(vote,id_prompt,user_id))
+    conn.commit()
+    
