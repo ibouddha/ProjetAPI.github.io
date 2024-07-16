@@ -1,7 +1,7 @@
 from flask import  Flask,redirect,url_for,render_template,request,jsonify,json,session
 import modals.connect as db
 import admin.admin as admin
-import users.users as admin
+import users.users as users
 import admin.admin as admin
 import modals.functions as func
 import jwt
@@ -12,6 +12,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = secrets.token_urlsafe(32)
 
 app.register_blueprint(admin.admin_bp,url_prefix='/admin')
+app.register_blueprint(users.user_bp,url_prefix='/users')
 
 @app.route('/',methods=['GET','POST'])
 def root():

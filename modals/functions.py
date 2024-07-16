@@ -87,7 +87,7 @@ def deleteprompt(id_prompt):
 def add_prompt(prompt):
     conn = connect.connect()
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO prompt values (%s,%s,%s,%s,%s,%s)",(prompt['id'],prompt['content'],prompt['prix'],prompt['status'],session['user_id']))
+    cursor.execute("INSERT INTO prompt values (%s,%s,%s,%s,%s)",(prompt['id_prompt'],prompt['content'],prompt['prix'],prompt['status'],prompt['user_id']))
     conn.commit()
     cursor.close()
 
@@ -98,13 +98,19 @@ def updatePrompt(prompt):
     conn.commit()
     cursor.close()
 
-#delete prompt
-def deletePrompt(id_prompt):
+#get prompt by id
+def getPrompt(id):
     conn = connect.connect()
     cursor = conn.cursor()
-    cursor.execute("DELETE FROM prompt WHERE id = %s",(id_prompt,))
-    conn.commit()
+    cursor.execute("SELECT * FROM prompt WHERE id_prompt = %s",(id,))
+    prompt = cursor.fetchone()
+    if prompt:
+        return {'prompt':{'id_prompt':prompt[0],'contenu':prompt[1],'prix':prompt[2],'status':prompt[3],'user_id':prompt[4]}}
+    else:
+        return {"user": "404 no prompt with this id"}
     cursor.close()
+    return prompt
+
 
 #get all prompts
 def getAllPrompts():
@@ -114,15 +120,6 @@ def getAllPrompts():
     prompts = cursor.fetchall()
     cursor.close()
     return prompts
-
-#admin ask for update
-def getPrompt(id_prompt):
-    conn = connect.connect()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM prompt WHERE id = %s",(id_prompt,))
-    prompt = cursor.fetchone()
-    cursor.close()
-    return prompt
 
 #update status of prompt
 def updateStatus(id_prompt,status):
@@ -186,4 +183,13 @@ def votePromptGroup(id_prompt,user_id,vote):
     cursor = conn.cursor()
     cursor.execute("UPDATE prompt SET vote = %s WHERE id = %s and user_id =%s",(vote,id_prompt,user_id))
     conn.commit()
+    cursor.close()
     
+def getWaiting():
+    conn = connect.connect()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM prompt WHERE status = 'en attente'")
+    prompts = cursor.fetchall()
+    cursor.close()
+    return prompts
+

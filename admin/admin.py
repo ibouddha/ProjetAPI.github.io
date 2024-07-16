@@ -30,6 +30,10 @@ def getUserByUsername(username):
         func.updateuser(user['user'])
     return user['user']
         
+@admin_bp.route("/delete/<int:id>",methods=['GET','POST'])
+def delPrompt(id):
+    prompt = func.getPrompt(id)
+    return prompt
 
 @admin_bp.route('/register',methods=["GET","POST"])
 def register():
@@ -51,6 +55,7 @@ def add_user():
     conn.commit()
     conn.close()
     return {"id":id_auto}
+
     
 @admin_bp.route('/',methods=['GET','POST'])
 def index():
